@@ -4,5 +4,8 @@ __pycache__/
 Lib/
 Scripts/
 pyvenv.cfg
+.idea/
+highscores.db
 *.db
 .idea/
+
