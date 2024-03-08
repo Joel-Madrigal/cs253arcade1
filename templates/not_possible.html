@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Guppies{% endblock %}
+
+{% block content %}
+
+<p>Invalid Guess! Guess again.</p>
+
+<div class="mt-4">
+        <form action="{{ url_for('guppies') }}" method="get">
+            <button type="submit" class="btn btn-primary">Try agai gugupp</button>
+        </form>
+</div>
+
+{% endblock %}

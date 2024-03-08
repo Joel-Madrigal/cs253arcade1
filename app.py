@@ -120,5 +120,69 @@ def hilo_guess():
                            result = result)
 
 
+@app.route("/guppies")
+def guppies():
+    # Initialize points to 100 if it's not already in the session
+    if 'vbucks' not in session:
+        session['vbucks'] = 100
+
+    # Retrieve points from session
+    cur = session['vbucks']
+
+    #if 'vbucks' not in session:
+    #   session['vbucks'] = 3
+
+    #errors = session['hilo_errors']
+    if cur <= 1:
+        final_cur = session['vbucks']
+        session['vbucks'] = 100  # reset game points
+        #top_scores = get_high_scores()
+        return render_template('guppies_over.html',
+                               cur=final_cur)
+
+    while True:
+        first_num = randint(1, 10)
+        second_num = randint(1, 10)
+        if first_num != second_num:
+            break
+
+    return render_template('guppies.html',
+                           cur=cur,
+                           first_num=first_num,
+                           second_num=second_num)
+                           #top_scores=top_scores)
+
+
+@app.route('/guppies_guess', methods=['POST'])
+def guppies_guess():
+
+    number_first = int(request.form.get('first_num'))
+    number_second = int(request.form.get('second_num'))
+    #num_guess = int(request.form.get('num_guess'))
+    bet = int(request.form.get('bet'))
+    cur = int(request.form.get('cur'))
+
+    # Update points and determine result based on the guess
+    if bet <= cur:
+        if number_second > number_first:
+            result = 'correct'
+            session['vbucks'] += bet
+        elif number_second < number_first:
+            result = 'incorrect'
+            session['vbucks'] -= bet
+        else:
+            result = 'incorrect'
+            session['vbucks'] -= bet
+    else:
+        return render_template('not_possible.html')
+
+    return render_template('guppies_result.html',
+                           number_first=number_first,
+                           number_second=number_second,
+                           result=result,
+                           bet=bet,
+                           cur=cur)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
