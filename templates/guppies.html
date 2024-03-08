@@ -24,11 +24,15 @@
           <label for="bet">How much will you bet ?</label>
           <input type="text" id="bet" name="bet" min="1" max="{{ cur }}"><br><br>
           <p>Is the second number Higher, Lower, or the Same as the first?</p>
-          <input type="hidden" name="guess" id="hiddenGuess">
 
+          <input type="hidden" name="guess" id="hiddenGuess">
           <button type="button" class="btn btn-success btn-lg mt-3" onclick="submitGuess('Higher')">Higher</button>
           <button type="button" class="btn btn-warning btn-lg mt-3" onclick="submitGuess('Lower')">Lower</button>
           <button type="button" class="btn btn-primary btn-lg mt-3" onclick="submitGuess('Same')">Same</button>
+        </form>
+
+        <form action="{{ url_for('end') }}" method="post" class="mt-4" id="endForm">
+          <button type="submit" class="btn btn-primary btn-lg mt-3">End Game</button>
         </form>
     </div>
 

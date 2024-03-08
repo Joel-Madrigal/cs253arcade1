@@ -136,15 +136,17 @@ def guppies():
     if cur <= 1:
         final_cur = session['vbucks']
         session['vbucks'] = 100  # reset game points
-        #top_scores = get_high_scores()
+        top_scores = get_high_scores()
         return render_template('guppies_over.html',
-                               cur=final_cur)
+                               cur=final_cur,
+                               scoreboard=top_scores)
 
     while True:
         first_num = randint(1, 10)
         second_num = randint(1, 10)
-        if first_num != second_num:
+        if first_num and second_num != 0:
             break
+
 
     return render_template('guppies.html',
                            cur=cur,
@@ -161,15 +163,28 @@ def guppies_guess():
     #num_guess = int(request.form.get('num_guess'))
     bet = int(request.form.get('bet'))
     cur = int(request.form.get('cur'))
+    guess = request.form.get('guess')
+    end = request.form.get('end')
+    top_score = get_high_scores()
 
-    # Update points and determine result based on the guess
+    if end == 'End Game':
+        return render_template('guppies_over.html',
+                               number_first=number_first,
+                               number_second=number_second,
+                               bet=bet,
+                               cur=cur,
+                               top_score=top_score)
+
     if bet <= cur:
-        if number_second > number_first:
+        if guess == 'Higher' and number_second > number_first:
             result = 'correct'
             session['vbucks'] += bet
-        elif number_second < number_first:
-            result = 'incorrect'
-            session['vbucks'] -= bet
+        elif guess == 'Lower' and number_second < number_first:
+            result = 'correct'
+            session['vbucks'] += bet
+        elif guess == 'Same' and number_second == number_first:
+            result = 'correct'
+            session['vbucks'] += bet
         else:
             result = 'incorrect'
             session['vbucks'] -= bet
@@ -182,6 +197,11 @@ def guppies_guess():
                            result=result,
                            bet=bet,
                            cur=cur)
+
+
+@app.route('/end_game', methods=['POST'])
+def end():
+    return render_template('guppies_over.html')
 
 
 if __name__ == '__main__':
