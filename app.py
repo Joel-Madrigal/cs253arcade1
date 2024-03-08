@@ -147,24 +147,16 @@ def hilo_guess():
 
 @app.route("/guppies")
 def guppies():
+
     # Initialize points to 100 if it's not already in the session
     if 'vbucks' not in session:
         session['vbucks'] = 100
 
-    # Retrieve points from session
     cur = session['vbucks']
 
-    #if 'vbucks' not in session:
-    #   session['vbucks'] = 3
-
-    #errors = session['hilo_errors']
     if cur <= 1:
-        final_cur = session['vbucks']
         session['vbucks'] = 100  # reset game points
-        top_scores = get_high_scores()
-        return render_template('guppies_over.html',
-                               cur=final_cur,
-                               scoreboard=top_scores)
+        return render_template('restart_guppies.html')
 
     while True:
         first_num = randint(1, 10)
@@ -172,33 +164,30 @@ def guppies():
         if first_num and second_num != 0:
             break
 
-
     return render_template('guppies.html',
                            cur=cur,
                            first_num=first_num,
                            second_num=second_num)
-                           #top_scores=top_scores)
 
 
-@app.route('/guppies_guess', methods=['POST'])
+@app.route('/guppies_guess', methods=['POST', 'GET'])
 def guppies_guess():
 
     number_first = int(request.form.get('first_num'))
     number_second = int(request.form.get('second_num'))
-    #num_guess = int(request.form.get('num_guess'))
     bet = int(request.form.get('bet'))
     cur = int(request.form.get('cur'))
     guess = request.form.get('guess')
     end = request.form.get('end')
-    top_score = get_high_scores()
+    #scores = get_high_scores('high_scores_guppies')
 
     if end == 'End Game':
         return render_template('guppies_over.html',
                                number_first=number_first,
                                number_second=number_second,
                                bet=bet,
-                               cur=cur,
-                               top_score=top_score)
+                               cur=cur)
+                               #scores=scores)
 
     if bet <= cur:
         if guess == 'Higher' and number_second > number_first:
@@ -224,9 +213,14 @@ def guppies_guess():
                            cur=cur)
 
 
-@app.route('/end_game', methods=['POST'])
+@app.route('/end_game', methods=['POST', 'GET'])
 def end():
-    return render_template('guppies_over.html')
+    money = session['vbucks']
+    session['vbucks'] = 100  # reset game points
+    scores = get_high_scores('high_scores_guppies')
+    return render_template('guppies_over.html',
+                           points=money,
+                           scores=scores)
 
 
 if __name__ == '__main__':
